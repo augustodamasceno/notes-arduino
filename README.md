@@ -11,12 +11,19 @@ A complete reference for Basic and Advanced Arduino Programming
 - A folder by subject.  
 * By subject, there are one or more examples of C programming, Arduino programming, and image files with schematics.  
 * Filename convention:  
-    `subject-<example-number>.<extention>`  
+    `subject-<ARDUINO_BOARD>-<EXAMPLE_NUMBER>.<extention>`  
     * The extensions are:
         * .c for C programming;
         * .ino for Arduino programming;
         * .png/.jpg/.svg/.pdf for schematics.
 
+## References
+
+- [AVR Libc User Manual](https://www.nongnu.org/avr-libc/user-manual/index.html)
+- [Arduino Official Website](https://www.arduino.cc/)
+- [Atmel ATmega328P Datasheet](https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-7810-Automotive-Microcontrollers-ATmega328P_Datasheet.pdf)
+- [C Programming Language Reference](https://cplusplus.com/)
+- [Arduino Programming Reference](https://www.arduino.cc/reference/en/)
 
 # Licenses
 All codes are licensed under the [BSD-2-Clause](https://spdx.org/licenses/BSD-2-Clause.html)  
