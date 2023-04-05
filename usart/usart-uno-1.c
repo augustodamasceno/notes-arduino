@@ -26,37 +26,56 @@
  */
 
 /* CPU frequency */
-#define F_CPU 16000000UL 
+#define F_CPU 16000000UL
 
-/* AVR device-specific IO definitions */
-#include <avr/io.h> 
+/* Convenience functions for busy-wait delay loops */
+#include <util/delay.h> 
 
-int ad;
 
-int main() {
-  /* ADC Configuration
-       Voltage Reference = AVCC.
-       No ADC Left Adjust Result (use the 10 bits).
-       Input Channel = ADC0.
-       ADC Enable.
-       ADC Prescaler = 128 (125 KHz). */ 
-  ADMUX |= (1<<REFS0);
-  ADCSRA |= (1<<ADEN) | (1<<ADPS0) | (1<<ADPS1) | (1<<ADPS2);
+char buffer[32];
 
-  while (1) {
-    /* Start Conversion: bit ADSC to one. */
-    ADCSRA |= 0b01000000;
-    /* Wait Conversion */
-    while ( !(ADCSRA & (1 << ADIF)) ){}
-    /* Get AD conversion result (0 to 1023 representing 0V to the voltage reference).
-       You can set ADLAR in ADMUX to one 
-         and use the ADCH to get only 8 bits resolution 
-         (0 to 255 representing 0V to Reference Voltage).
-    */
-    ad = ADC;
+unsigned char sendBufferUsart();
 
-    /* Use the ad value in your system. */
-  }
+
+int main(){
+    /* USART
+         Character Size 8
+         Stop Bit 1
+         Baud Rate 9600
+         No Parity */
+    UCSR0B |= ( 1 << RXEN0) | ( 1 << TXEN0);
+    UCSR0C |= ( 1 << UCSZ01 ) | ( 1 << UCSZ00 ) | ( 1 << USBS0) ;
+    
+    /* Baud Rate Setting for f_osc = 16MHz */
+    unsigned int ubrr = 103;
+    UBRR0H = ( unsigned char ) ( ubrr>>8) ;
+    UBRR0L = ( unsigned char ) ubrr ;
+
+    unsigned int messageNum = 0;
+
+    while (1){
+        /* Write a message in the buffer */
+        sprintf(buffer,"Message %d\n", messageNum);
+        messageNum++;
+
+        /* Send buffer through USART */
+        sendBufferUsart();
+
+        /* Wait 1 second */
+        _delay_ms(1000); 
+    }
 
   return 0;
+}
+
+/* Send the buffer over USART */
+unsigned char sendBufferUsart()
+{
+  unsigned char c = 0;
+  while( buffer[c] != '\0' )
+  {
+    while (!( UCSR0A & (1<<UDRE0) )) ;
+    UDR0 = buffer[c];
+    c++;
+  }
 }
